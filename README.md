@@ -2,6 +2,7 @@
 ## Part A
 ### Codi en Línea
 ```cpp
+#include <Arduino.h>
 #include <SPI.h> 
 #include <SD.h> 
 File myFile; 
@@ -30,6 +31,14 @@ void loop()
 { 
 }
 ```
+### Explicació del codi
+`1.Inclusió de llibreries`
+```cpp
+#include <Arduino.h>
+#include <SPI.h>
+#include <SD.h>
+```
+
 ## Part B
 ### Codi en Línea
 ```cpp
