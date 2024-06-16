@@ -119,3 +119,61 @@ if ( mfrc522.PICC_IsNewCardPresent())
 #include <SPI.h>
 #include <MFRC522.h>
 ```
+Aquí s'inclouen les mateixes dues primeres llibreries que en la part A d'aquesta mateixa pràctica cambiant només la de la SD per una nova que ens permetrà utilitzar funcions específiques per treballar amb el lector RFID RC522.
+
+`2.Definició de pins`
+```cpp
+#define RST_PIN 9    // Pin 9 para el reset del RC522
+#define SS_PIN 10    // Pin 10 para el SS (SDA) del RC522
+```
+Aquí ja tenim comentaris per saber que és el que volem que faci cada pin dels assignats, significant "SS" al segón la selecció d'esclau.
+
+`3.Creació objecte MFRC522`
+```cpp
+MFRC522 mfrc522(SS_PIN, RST_PIN); // Creamos el objeto para el RC522
+```
+Com ja està comentat al codi aquí es crea un objecte de classe 'MFRC522' anomenat 'mfrc522' que és el que farem servir per interactuar amb el lector RFID.
+
+`4.Setup`
+```cpp
+void setup() {
+  Serial.begin(9600);    // Iniciamos la comunicación serial
+  SPI.begin();           // Iniciamos el bus SPI
+  mfrc522.PCD_Init();    // Iniciamos el MFRC522
+  Serial.println("Lectura del UID");
+}
+```
+- **'Serial.begin(9600);:'** Inicia la comunicació serial a 9600 bauds.
+- **'SPI.begin();:'** Inicialitza el bus SPI.
+- **'mfrc522.PCD_Init();:'** Inicialitza el lector RFID RC522.
+- **'Serial.println("Lectura del UID");:'** Mostra per pantalla un missatge indicant que ja es pot llegir el UID d'una targeta.
+
+`5.Loop`
+```cpp
+void loop() {
+  // Revisamos si hay nuevas tarjetas presentes
+  if (mfrc522.PICC_IsNewCardPresent()) {
+    // Seleccionamos una tarjeta
+    if (mfrc522.PICC_ReadCardSerial()) {
+      // Enviamos serialemente su UID
+      Serial.print("Card UID:");
+      for (byte i = 0; i < mfrc522.uid.size; i++) {
+        Serial.print(mfrc522.uid.uidByte[i] < 0x10 ? " 0" : " ");
+        Serial.print(mfrc522.uid.uidByte[i], HEX);
+      }
+      Serial.println();
+      // Terminamos la lectura de la tarjeta actual
+      mfrc522.PICC_HaltA();
+    }}}
+```
+- if (mfrc522.PICC_IsNewCardPresent()): Comproba si hi ha una nova targeta present.
+  - if (mfrc522.PICC_ReadCardSerial()): Intenta llegir l'UID de la targeta.
+    - Serial.print("Card UID:");: Mostra per pantalla el prefixe "Card UID:".
+    - for (byte i = 0; i < mfrc522.uid.size; i++): Itera a cada byte de l'UID.
+      - Serial.print(mfrc522.uid.uidByte[i] < 0x10 ? " 0" : " ");: Imprimeix un espai y un zero si el byte es menor a 0x10, perquè no es desfaci el format de dos dígits.
+      - Serial.print(mfrc522.uid.uidByte[i], HEX);: Mostra el byte actual de l'UID en format hexadecimal.
+    - Serial.println();: Mostra una nova línea després de mostrar l'UID sencer.
+    - mfrc522.PICC_HaltA();: Finalitza la lectura de la targeta actual.
+
+  
+    
